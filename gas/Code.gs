@@ -191,11 +191,10 @@ function preview(url) {
     // 文字コードを見て読む（楽天はEUC-JPなど、UTF-8以外のページがある）
     const headers = res.getHeaders();
     const ct = String(headers['Content-Type'] || headers['content-type'] || '');
-    let charset = (ct.match(/charset=["']?([\w-]+)/i) || [])[1];
-    if (!charset) {
-      const head = res.getContentText('ISO-8859-1').slice(0, 5000);
-      charset = (head.match(/<meta[^>]+charset=["']?([\w-]+)/i) || [])[1] || 'UTF-8';
-    }
+    // ページ内の <meta charset> を優先し、なければ応答ヘッダー、それもなければUTF-8
+    const head = res.getContentText('ISO-8859-1').slice(0, 5000);
+    const charset = (head.match(/<meta[^>]+charset=["']?([\w-]+)/i) || [])[1]
+      || (ct.match(/charset=["']?([\w-]+)/i) || [])[1] || 'UTF-8';
     try { html = res.getContentText(charset); } catch (err) { html = res.getContentText(); }
     html = html.slice(0, 400000);
   } catch (err) {
