@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>おうちストック</title>
-<meta name="theme-color" content="#F5F0E8">
+<meta name="theme-color" content="#FFFFFF">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="おうちストック">
@@ -1305,6 +1305,9 @@ label .error {
   }
 }
 .catalog-title{margin:22px 0 6px}.catalog-group{font-size:14px;color:var(--muted);margin:22px 0 4px}.catalog-card{display:flex;flex-direction:column;gap:8px}.catalog-card .card-body{flex:1}.catalog-card>button{width:100%;min-height:44px;font-size:13px}.catalog-own{margin-top:22px}.catalog-own .primary{width:100%}.tile.has-photo{background:var(--surface)}
+@media (prefers-color-scheme: light) { :root[data-bg="white"]:not([data-theme="dark"]) { --bg: oklch(1 0 0); --dot: oklch(0.5 calc(0.06 * var(--sat)) var(--h) / 0.08); --transparent: oklch(1 0 0 / 0); } }
+:root[data-theme="light"][data-bg="white"] { --bg: oklch(1 0 0); --dot: oklch(0.5 calc(0.06 * var(--sat)) var(--h) / 0.08); --transparent: oklch(1 0 0 / 0); }
+.bg-choices{display:flex;gap:8px;flex-wrap:wrap}
 </style>
 </head>
 <body>
@@ -1351,6 +1354,7 @@ label .error {
 <form id="settings-form" novalidate>
 <fieldset class="field"><legend>あなたの呼び名</legend><div id="name-choices" class="choices"></div><input id="my-name-other" class="other-input" placeholder="呼び名を入力" maxlength="20" hidden><p class="hint">「最終更新：ママ・3分前」のように表示されます</p></fieldset>
 <fieldset class="field"><legend>テーマの色（このスマホだけ）</legend><div id="hue-choices" class="hue-choices"></div></fieldset>
+<fieldset class="field"><legend>背景の色</legend><div id="bg-choices" class="bg-choices"></div></fieldset>
 <div class="field"><label for="api-url">データの保存先URL</label><input id="api-url" type="url" inputmode="url" placeholder="https://script.google.com/macros/s/…/exec" autocomplete="off"></div>
 <div class="field"><label for="api-key">合言葉</label><input id="api-key" autocomplete="off" placeholder="setup の実行ログに出た文字列"></div>
 <p id="settings-error" class="error" role="status"></p>
@@ -1678,6 +1682,12 @@ document.documentElement.style.setProperty("--h",t[1]);document.documentElement.
 $("hue-choices").innerHTML=hues.map(([n,v,sat,l])=>`<button type="button" class="hue-chip ${n===t[0]?"selected":""}" style="--chip-h:${v};--chip-s:${sat};--chip-l:${l}" data-hue="${n}" aria-label="${n}" title="${n}" aria-pressed="${n===t[0]}"></button>`).join("");
 const tc=document.querySelector('meta[name="theme-color"]');if(tc)tc.content=getComputedStyle(document.body).backgroundColor}
 $("hue-choices").onclick=e=>{const b=e.target.closest("[data-hue]");if(!b)return;e.stopPropagation();store.set("hue",b.dataset.hue);applyHue(b.dataset.hue)};
+const bgs=[["white","白"],["tint","クリーム"]];
+function applyBg(v){const b=bgs.find(x=>x[0]===v)||bgs[0];document.documentElement.dataset.bg=b[0];
+$("bg-choices").innerHTML=bgs.map(([k,n])=>`<button type="button" class="chip ${k===b[0]?"selected":""}" data-bg="${k}" aria-pressed="${k===b[0]}">${n}</button>`).join("");
+const tc=document.querySelector('meta[name="theme-color"]');if(tc)tc.content=getComputedStyle(document.body).backgroundColor}
+$("bg-choices").onclick=e=>{const b=e.target.closest("[data-bg]");if(!b)return;e.stopPropagation();store.set("bg",b.dataset.bg);applyBg(b.dataset.bg)};
+applyBg(store.get("bg")||"white");
 applyHue(store.get("hue")||"ベージュ");
 
 // ---- 設定 ----
