@@ -5,7 +5,7 @@
 //    次のユーザーとして実行: 自分 / アクセスできるユーザー: 全員
 
 const SHEET = 'items';
-const COLS = ['id', 'name', 'category', 'size', 'count', 'threshold', 'unit', 'store', 'price', 'url', 'memo', 'updatedBy', 'updatedAt'];
+const COLS = ['id', 'name', 'category', 'size', 'count', 'threshold', 'unit', 'store', 'price', 'url', 'memo', 'updatedBy', 'updatedAt', 'image'];
 const NUMS = ['count', 'threshold', 'updatedAt'];
 
 function setup() {
@@ -46,7 +46,11 @@ function authorized(key) {
 }
 
 function sheet() {
-  return SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET);
+  const sh = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET);
+  // 列が増えたとき（写真の列など）に見出し行を自動で追加する
+  const head = sh.getRange(1, 1, 1, Math.max(1, sh.getLastColumn())).getValues()[0];
+  if (COLS.some((c, i) => head[i] !== c)) sh.getRange(1, 1, 1, COLS.length).setValues([COLS]);
+  return sh;
 }
 
 function rev() {
@@ -70,7 +74,7 @@ function readItems(sh) {
     head.forEach((h, i) => { o[h] = r[i]; });
     NUMS.forEach(k => { o[k] = Number(o[k]) || 0; });
     o.price = o.price === '' || o.price === null ? null : Number(o.price);
-    ['id', 'name', 'category', 'size', 'unit', 'store', 'url', 'memo', 'updatedBy'].forEach(k => { o[k] = String(o[k] ?? ''); });
+    ['id', 'name', 'category', 'size', 'unit', 'store', 'url', 'memo', 'updatedBy', 'image'].forEach(k => { o[k] = String(o[k] ?? ''); });
     list.push(o);
   });
   return list;
@@ -105,6 +109,7 @@ function clean(d) {
   if ('store' in d) o.store = str(d.store, 100);
   if ('memo' in d) o.memo = str(d.memo, 1000);
   if ('url' in d) { const u = str(d.url, 2000); o.url = /^https?:\/\//i.test(u) ? u : ''; }
+  if ('image' in d) { const u = str(d.image, 2000); o.image = /^https?:\/\//i.test(u) ? u : ''; }
   if ('price' in d) o.price = d.price === null || d.price === '' || !(Number(d.price) >= 0) ? null : Number(d.price);
   if ('count' in d) o.count = int(d.count, 9999);
   if ('threshold' in d) o.threshold = int(d.threshold, 999);
@@ -120,6 +125,7 @@ function doPost(e) {
   let req;
   try { req = JSON.parse(e.postData.contents); } catch (err) { return out({ ok: false, code: 'bad_request' }); }
   if (!authorized(req.key)) return out({ ok: false, code: 'unauthorized' });
+  if (req.action === 'preview') return out(preview(req.url));
   const lock = LockService.getScriptLock();
   if (!lock.tryLock(15000)) return out({ ok: false, code: 'busy' });
   try {
@@ -168,4 +174,49 @@ function doPost(e) {
   } finally {
     lock.releaseLock();
   }
+}
+
+// 商品ページのURLから、代表写真(og:image)と商品名を取ってくる
+function preview(url) {
+  url = str(url, 2000);
+  if (!/^https?:\/\//i.test(url)) return { ok: false, code: 'bad_request' };
+  if (/\.(jpe?g|png|webp|gif)(\?|#|$)/i.test(url)) return { ok: true, image: url, title: '' };
+  let html;
+  try {
+    const res = UrlFetchApp.fetch(url, {
+      muteHttpExceptions: true, followRedirects: true,
+      headers: { 'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1', 'Accept-Language': 'ja' }
+    });
+    if (res.getResponseCode() >= 400) return { ok: false, code: 'fetch_failed' };
+    html = res.getContentText().slice(0, 400000);
+  } catch (err) {
+    return { ok: false, code: 'fetch_failed' };
+  }
+  const meta = name => {
+    const re = new RegExp('<meta[^>]+(?:property|name)=["\']' + name + '["\'][^>]*>', 'i');
+    const tag = (html.match(re) || [])[0];
+    if (!tag) return '';
+    const m = tag.match(/content=["']([^"']*)["']/i);
+    return m ? decode(m[1]) : '';
+  };
+  let image = meta('og:image') || meta('og:image:url') || meta('twitter:image');
+  if (!image) { const m = html.match(/<link[^>]+rel=["']image_src["'][^>]+href=["']([^"']+)["']/i); if (m) image = decode(m[1]); }
+  let title = meta('og:title') || ((html.match(/<title[^>]*>([^<]*)<\/title>/i) || [])[1] || '');
+  title = decode(title).replace(/\s+/g, ' ').trim();
+  let store = '';
+  // 楽天は「【楽天市場】商品名: ショップ名」の形なので分ける
+  if (/^【楽天市場】/.test(title)) {
+    title = title.replace(/^【楽天市場】/, '');
+    const k = title.lastIndexOf(': ');
+    if (k > 0) { store = title.slice(k + 2).trim(); title = title.slice(0, k).trim(); }
+  }
+  title = title.slice(0, 200); store = store.slice(0, 100);
+  if (image && image.startsWith('//')) image = 'https:' + image;
+  else if (image && image.startsWith('/')) image = url.match(/^https?:\/\/[^/]+/i)[0] + image;
+  if (!/^https?:\/\//i.test(image)) image = '';
+  return image ? { ok: true, image: image, title: title, store: store } : { ok: false, code: 'no_image', title: title, store: store };
+}
+
+function decode(s) {
+  return String(s).replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&lt;/g, '<').replace(/&gt;/g, '>');
 }
