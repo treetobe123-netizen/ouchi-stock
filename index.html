@@ -1656,8 +1656,11 @@ if(!url){if(!auto)photoView("先に商品ページのURLを入れてください
 if(fetchingPhoto||!api.url)return;fetchingPhoto=true;$("fetch-photo").disabled=true;photoView("写真を探しています…");
 try{
 const json=await request(api.url,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({key:api.key,action:"preview",url})},gen);
-if(json.title&&!$("item-name").value.trim())$("item-name").value=json.title;
-if(json.store&&!$("item-store").value.trim())$("item-store").value=json.store;
+let title=String(json.title||""),shop=String(json.store||"");
+// 楽天は「商品名：ショップ名」（全角コロンのこともある）
+if(!shop&&/rakuten\.co\.jp/.test(url)){const m=title.match(/^(.*\S)\s*[:：]\s*([^:：]+)$/);if(m){title=m[1].trim();shop=m[2].trim()}}
+if(title&&!$("item-name").value.trim())$("item-name").value=title;
+if(shop&&!$("item-store").value.trim())$("item-store").value=shop;
 if(json.ok&&json.image){formImage=safeURL(json.image);photoView("写真を入れました。「保存」で確定します")}
 else photoView(json.code==="unauthorized"?"合言葉が違います":"このページからは写真を見つけられませんでした。画像のURL（.jpg など）を貼ってもOKです");
 }catch{photoView("写真を取得できませんでした。電波を確認してもう一度お試しください")}

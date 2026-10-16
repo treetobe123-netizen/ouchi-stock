@@ -215,8 +215,8 @@ function preview(url) {
   // 楽天は「【楽天市場】商品名: ショップ名」の形なので分ける
   if (/^【楽天市場】/.test(title)) {
     title = title.replace(/^【楽天市場】/, '');
-    const k = title.lastIndexOf(': ');
-    if (k > 0) { store = title.slice(k + 2).trim(); title = title.slice(0, k).trim(); }
+    const m = title.match(/^(.*\S)\s*[:：]\s*([^:：]+)$/);
+    if (m) { title = m[1].trim(); store = m[2].trim(); }
   }
   title = title.slice(0, 200); store = store.slice(0, 100);
   if (image && image.startsWith('//')) image = 'https:' + image;
