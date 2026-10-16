@@ -1,0 +1,365 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>おうちストック</title>
+<meta name="theme-color" content="#F6F5FA">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="おうちストック">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Zen+Maru+Gothic:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F6F5FA;--fg:#292637;--card:#FFFFFF;--muted:#777184;--line:#E7E3EF;--accent:#6C5CE7;--accent-soft:#EEEAFF;--on-accent:#FFFFFF;--pink:#FDECEF;--red:#C2185B;--green-bg:#E4F4EB;--green:#28734C;--zero-bg:#E8E7ED;--zero:#696574;--baby:#F4E7F3;--baby-fg:#99618E;--feed:#FFF0DE;--feed-fg:#A87732;--mama:#EDE7FA;--mama-fg:#8564AB;--home:#E4EFF7;--home-fg:#517F9E;--shadow:0 4px 18px #29263708;--overlay:#17102266;--transparent:transparent;color-scheme:light}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#18161F;--fg:#F0ECF7;--card:#25222E;--muted:#B0A8BF;--line:#40394E;--accent:#AC9CFF;--accent-soft:#38304F;--on-accent:#201735;--pink:#402431;--red:#FF98BA;--green-bg:#213E31;--green:#96DCB2;--zero-bg:#3A3643;--zero:#BDB5CA;--baby:#402D3F;--baby-fg:#E0A8D5;--feed:#443524;--feed-fg:#E8BE83;--mama:#382E48;--mama-fg:#C4ACEB;--home:#293B48;--home-fg:#A0C9E4;--shadow:0 4px 18px #00000020;--overlay:#00000088;--transparent:transparent;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#18161F;--fg:#F0ECF7;--card:#25222E;--muted:#B0A8BF;--line:#40394E;--accent:#AC9CFF;--accent-soft:#38304F;--on-accent:#201735;--pink:#402431;--red:#FF98BA;--green-bg:#213E31;--green:#96DCB2;--zero-bg:#3A3643;--zero:#BDB5CA;--baby:#402D3F;--baby-fg:#E0A8D5;--feed:#443524;--feed-fg:#E8BE83;--mama:#382E48;--mama-fg:#C4ACEB;--home:#293B48;--home-fg:#A0C9E4;--shadow:0 4px 18px #00000020;--overlay:#00000088;--transparent:transparent;color-scheme:dark}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font-family:"Noto Sans JP",system-ui,sans-serif;font-size:14px}button,input,select,textarea{font:inherit}button,a,input,select,textarea{-webkit-tap-highlight-color:var(--transparent)}button{cursor:pointer;color:inherit;border:0;background:var(--transparent)}button:disabled{opacity:.4;cursor:not-allowed}button,a{touch-action:manipulation}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--accent);outline-offset:3px}[hidden]{display:none!important}h1,h2,h3,p{margin:0}h1,h2,h3,.number{font-family:"Zen Maru Gothic",system-ui,sans-serif}h1{font-size:30px;letter-spacing:.02em}h2{font-size:21px}h3{font-size:17px}.number{font-variant-numeric:tabular-nums}.muted{color:var(--muted);font-size:12px;line-height:1.8}.wrap{max-width:720px;margin:auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px calc(150px + env(safe-area-inset-bottom,0px))}header{margin-bottom:24px}header .muted{margin-top:8px}.banner{padding:14px 16px;background:var(--pink);color:var(--red);border-radius:14px;margin-bottom:20px;line-height:1.8}.banner button{font-size:12px;font-weight:700;min-height:44px;padding:0}.filters{display:flex;gap:8px;flex-wrap:wrap;margin:20px 0 28px}.chip{border:1px solid var(--line);background:var(--card);border-radius:99px;padding:10px 14px;min-height:44px;font-size:12px}.chip.selected{border-color:var(--accent);background:var(--accent-soft);color:var(--accent)}.section{margin-bottom:28px}.section-head{display:flex;align-items:center;gap:8px;margin-bottom:12px}.section-toggle{display:flex;gap:9px;align-items:center;text-align:left;flex:1;min-height:48px}.section-toggle strong{font-size:16px}.section-toggle small{display:block;color:var(--muted);margin-top:3px}.section-toggle small em{font-style:normal;color:var(--red)}.icon-button{width:44px;height:44px;border-radius:50%;background:var(--card);color:var(--accent);font-size:24px;flex-shrink:0}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}.stock-card{background:var(--card);border-radius:16px;box-shadow:var(--shadow);overflow:hidden;min-width:0;padding:7px}.card-body{display:block;width:100%;padding:0;text-align:left}.tile{background:var(--baby);color:var(--baby-fg);border-radius:12px;display:flex;align-items:center;justify-content:center;position:relative;font-family:"Zen Maru Gothic",system-ui,sans-serif;font-size:38px;font-weight:700;aspect-ratio:1.12}.tile.feed{background:var(--feed);color:var(--feed-fg)}.tile.mama{background:var(--mama);color:var(--mama-fg)}.tile.home{background:var(--home);color:var(--home-fg)}.size{position:absolute;bottom:6px;left:6px;background:var(--card);color:var(--fg);font-size:10px;border-radius:6px;padding:2px 6px;max-width:85%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.badge{position:absolute;top:5px;right:5px;min-width:29px;height:29px;padding:0 5px;border-radius:99px;display:grid;place-items:center;font-size:13px;background:var(--green-bg);color:var(--green)}.badge.low{background:var(--pink);color:var(--red)}.badge.zero{background:var(--zero-bg);color:var(--zero)}.product-name{font-size:12px;font-weight:700;line-height:1.6;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere;min-height:39px;margin:9px 3px 3px}.stepper{display:flex;align-items:center;justify-content:space-between;min-width:0}.stepper button{min-width:44px;width:44px;height:44px;flex-shrink:0;position:relative;font-size:22px;color:var(--accent);padding:0}.stepper button:before{content:"";position:absolute;inset:7px;border-radius:50%;background:var(--accent-soft)}.stepper button span{position:relative}.stepper output{font-weight:700;min-width:0;font-size:14px;overflow-wrap:anywhere;text-align:center}.stock-card .stepper{margin-inline:-7px}.empty{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:34px 22px;text-align:center;margin-top:24px}.empty h2{font-size:19px}.empty p{color:var(--muted);line-height:1.9;margin:12px 0 22px}.primary{background:var(--accent);color:var(--on-accent);border-radius:12px;padding:13px 18px;min-height:48px;font-weight:700}.secondary{border:1px solid var(--line);border-radius:10px;min-height:44px;padding:9px 14px;background:var(--card)}.fab{position:fixed;right:max(20px,calc((100vw - 720px)/2 + 20px),env(safe-area-inset-right,0px));bottom:calc(92px + env(safe-area-inset-bottom,0px));width:60px;height:60px;border-radius:50%;background:var(--accent);color:var(--on-accent);font-size:36px;box-shadow:var(--shadow);z-index:5}.nav{position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));z-index:10}.nav-inner{max-width:688px;margin:auto;display:flex}.nav button{flex:1;min-height:72px;color:var(--muted);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:4px}.nav button.active{color:var(--accent)}.nav-icon{position:relative;display:block;height:26px}.nav svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.nav-badge{position:absolute;top:-4px;left:17px;background:var(--red);color:var(--card);border-radius:20px;min-width:18px;padding:1px 4px;font-size:10px}.search{width:100%;padding:16px;border:1px solid var(--line);border-radius:14px;background:var(--card);color:var(--fg);margin-bottom:26px;font-size:13px}.category-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:16px}.category-card{background:var(--card);border-radius:16px;padding:15px;text-align:left;display:flex;align-items:center;gap:10px;min-height:94px;box-shadow:var(--shadow)}.category-card .tile,.list-row .tile{width:48px;height:48px;aspect-ratio:auto;flex-shrink:0;font-size:23px}.category-card strong{font-size:12px;overflow-wrap:anywhere}.category-card small{display:block;color:var(--muted);font-size:11px;margin-top:5px}.list{display:grid;gap:12px;margin-top:18px}.list-row{padding:16px;background:var(--card);border-radius:16px;box-shadow:var(--shadow);display:flex;align-items:center;gap:12px;flex-wrap:wrap}.row-body{display:flex;align-items:center;gap:12px;flex:1;min-width:140px;text-align:left;padding:0}.row-info{min-width:0;flex:1}.row-info strong{display:block;overflow-wrap:anywhere;font-size:14px}.row-info p{margin-top:4px;overflow-wrap:anywhere}.list-row .stepper{width:115px;margin-left:auto}.low-text{color:var(--red);font-weight:700;font-size:13px}.row-actions{display:flex;align-items:center;justify-content:flex-end;gap:12px;width:100%;flex-wrap:wrap}.store-link{color:var(--accent);font-size:12px;min-height:44px;display:inline-flex;align-items:center;text-decoration:none}.page-head{display:flex;align-items:center;justify-content:space-between;gap:12px}.copy-fallback{width:100%;min-height:150px;margin-top:16px}.modal{position:fixed;inset:0;background:var(--overlay);z-index:30;display:flex;align-items:flex-end;justify-content:center}.sheet{background:var(--bg);width:100%;max-width:560px;max-height:92dvh;overflow:auto;border-radius:24px 24px 0 0;padding:20px max(20px,env(safe-area-inset-right,0px)) calc(26px + env(safe-area-inset-bottom,0px)) max(20px,env(safe-area-inset-left,0px));animation:slide .22s ease-out;overscroll-behavior:contain}.sheet-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}.sheet-head button{font-size:23px}.field{margin:19px 0}.field>label,.field legend{display:block;font-weight:700;font-size:13px;margin-bottom:9px}.field input,.field select,.field textarea,.copy-fallback{border:1px solid var(--line);border-radius:10px;padding:12px;background:var(--card);color:var(--fg);width:100%;min-height:46px}.field textarea{resize:vertical;min-height:88px}fieldset.field{border:0;padding:0;min-width:0}.choices{display:flex;gap:7px;flex-wrap:wrap}.field .other-input{margin-top:10px}.large-stepper{max-width:230px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:4px}.large-stepper output{font-size:24px}.large-stepper button{width:54px;height:50px}.error{color:var(--red);font-size:12px;margin-top:7px}.save{width:100%;margin-top:12px}.delete{color:var(--red);width:100%;min-height:48px;margin-top:8px;font-weight:700}.toast{position:fixed;bottom:calc(90px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);max-width:calc(100% - 32px);width:max-content;background:var(--fg);color:var(--bg);border-radius:12px;padding:13px 18px;font-size:13px;z-index:60;box-shadow:var(--shadow)}@keyframes slide{from{transform:translateY(30px);opacity:0}to{transform:translateY(0);opacity:1}}@media(min-width:520px){.grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}}@media(min-width:680px){.grid{grid-template-columns:repeat(5,minmax(0,1fr))}}@media(max-width:359px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.category-card{flex-direction:column;align-items:flex-start}}@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;scroll-behavior:auto!important}}
+html{-webkit-text-size-adjust:100%}.wrap{padding-top:calc(28px + env(safe-area-inset-top,0px))}header{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}header>div{min-width:0}.gear{width:44px;height:44px;border-radius:50%;background:var(--card);color:var(--muted);display:grid;place-items:center;flex-shrink:0;box-shadow:var(--shadow)}.gear svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.hint{color:var(--muted);font-size:12px;line-height:1.8;margin-top:6px}.share-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+</style>
+</head>
+<body>
+<main class="wrap">
+<header><div><h1>おうちストック</h1><p id="shared-status" class="muted">夫婦で共有中 · 最終更新 まだありません</p></div><button id="open-settings" class="gear" type="button" aria-label="設定"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z"/></svg></button></header>
+<div id="connection-banner" class="banner" role="status" hidden></div>
+<section id="stock-view" aria-label="ストック"></section>
+<section id="search-view" aria-label="探す" hidden>
+<input id="search-input" class="search" type="search" placeholder="登録済みのアイテムを探す（商品名・ブランド）" aria-label="登録済みのアイテムを探す（商品名・ブランド）">
+<div id="search-content"></div>
+</section>
+<section id="buy-view" aria-label="買い足し" hidden></section>
+</main>
+<button id="fab" class="fab" aria-label="ストックを追加" data-write disabled>+</button>
+<nav class="nav" aria-label="メインナビゲーション"><div class="nav-inner">
+<button data-tab="stock" class="active"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10 12 3l9 7v10H3Z M9 20v-7h6v7"/></svg></span>ストック</button>
+<button data-tab="search"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg></span>探す</button>
+<button data-tab="buy"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h15l-2 9H7L4 4H2 M9 21h.01 M17 21h.01 M9 8V6a3 3 0 0 1 6 0v2"/></svg><span id="buy-badge" class="nav-badge number" hidden></span></span>買い足し</button>
+</div></nav>
+<div id="modal" class="modal" hidden>
+<section id="sheet" class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-title" tabindex="-1">
+<div class="sheet-head"><h2 id="sheet-title">ストックを追加</h2><button id="close-sheet" class="icon-button" aria-label="閉じる">×</button></div>
+<form id="item-form" novalidate>
+<div class="field"><label for="item-name">商品名 <span class="error">必須</span></label><input id="item-name" required maxlength="200" autocomplete="off" aria-describedby="name-error"><p id="name-error" class="error" hidden>商品名を入力してください</p></div>
+<div class="field"><label for="item-category">カテゴリ</label><select id="item-category"></select></div>
+<fieldset class="field"><legend>サイズ</legend><div id="size-choices" class="choices"></div><input id="item-size-other" class="other-input" aria-label="その他のサイズ" placeholder="サイズを入力" maxlength="80" hidden></fieldset>
+<fieldset class="field"><legend>単位</legend><div id="unit-choices" class="choices"></div></fieldset>
+<div class="field"><label id="count-label" for="item-count">在庫数</label><div class="stepper large-stepper"><button id="count-minus" type="button" aria-label="在庫数を減らす"><span>−</span></button><output id="item-count" class="number" aria-live="polite">0</output><button id="count-plus" type="button" aria-label="在庫数を増やす"><span>+</span></button></div></div>
+<div class="field"><label for="item-threshold">この数以下で買い足しどき</label><div class="stepper large-stepper"><button id="threshold-minus" type="button" aria-label="買い足し基準を減らす"><span>−</span></button><output id="item-threshold" class="number" aria-live="polite">1</output><button id="threshold-plus" type="button" aria-label="買い足し基準を増やす"><span>+</span></button></div></div>
+<div class="field"><label for="item-store">購入先</label><input id="item-store" placeholder="楽天24 / Amazon / 西松屋 など" maxlength="200"></div>
+<div class="field"><label for="item-price">価格（円）</label><input id="item-price" type="number" min="0" step="any" inputmode="decimal" placeholder="任意"></div>
+<div class="field"><label for="item-url">商品ページURL</label><input id="item-url" type="url" placeholder="https://" inputmode="url"><p id="url-error" class="error" hidden>http または https のURLを入力してください</p></div>
+<div class="field"><label for="item-memo">メモ</label><textarea id="item-memo" placeholder="ブランドや買うときのメモ"></textarea></div>
+<p id="edit-status" class="muted"></p><p id="form-error" class="error" role="status"></p>
+<button id="save-item" type="submit" class="primary save" data-write>ストックに追加</button>
+<button id="delete-item" type="button" class="delete" data-write hidden>削除</button>
+</form>
+</section>
+</div>
+<div id="settings-modal" class="modal" hidden>
+<section id="settings-sheet" class="sheet" role="dialog" aria-modal="true" aria-labelledby="settings-title" tabindex="-1">
+<div class="sheet-head"><h2 id="settings-title">設定</h2><button id="close-settings" class="icon-button" aria-label="閉じる">×</button></div>
+<form id="settings-form" novalidate>
+<fieldset class="field"><legend>あなたの呼び名</legend><div id="name-choices" class="choices"></div><input id="my-name-other" class="other-input" placeholder="呼び名を入力" maxlength="20" hidden><p class="hint">「最終更新：ママ・3分前」のように表示されます</p></fieldset>
+<div class="field"><label for="api-url">データの保存先URL</label><input id="api-url" type="url" inputmode="url" placeholder="https://script.google.com/macros/s/…/exec" autocomplete="off"></div>
+<div class="field"><label for="api-key">合言葉</label><input id="api-key" autocomplete="off" placeholder="setup の実行ログに出た文字列"></div>
+<p id="settings-error" class="error" role="status"></p>
+<button id="save-settings" type="submit" class="primary save">保存してつなぐ</button>
+<div class="field"><p class="hint">パートナーのスマホには、下のボタンでコピーしたリンクをLINEなどで送ってください。開くだけで同じデータにつながります。</p><div class="share-row"><button id="copy-invite" type="button" class="secondary">共有リンクをコピー</button></div><textarea id="invite-text" class="copy-fallback" readonly aria-label="共有リンク" hidden></textarea></div>
+</form>
+</section>
+</div>
+<div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+<script>
+(()=>{
+"use strict";
+const $=id=>document.getElementById(id);
+const categories=[
+["diaper","おむつ","baby"],["wipes","おしりふき","baby"],["milk","ミルク","feed"],["babyfood","ベビーフード","feed"],["skincare","ベビースキンケア","baby"],["bath","おふろ・入浴","baby"],["hygiene","衛生・ケア用品","baby"],["teeth","歯みがき・乳歯ケア","baby"],["bottle","哺乳びん・乳首","feed"],["pump","さく乳器・母乳保存","feed"],["pad","母乳パッド・授乳ケア","feed"],["pacifier","おしゃぶり・歯固め","baby"],["tableware","ベビー食器・食具","feed"],["mug","マグ・ドリンクボトル","feed"],["mamasupp","ママ向けサプリメント","mama"],["mamadrink","ママ向け飲料","mama"],["maternity","マタニティスキンケア","mama"],["inner","産前産後インナー","mama"],["household","日用品","home"],["other","その他","home"]];
+const groups=[["all","全て"],["baby","ベビー用品"],["feed","離乳食・授乳"],["mama","ママ用品"],["home","日用品"]];
+const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const num=(v,d=0)=>Number.isFinite(Number(v))&&v!==null&&v!==""?Math.max(0,Number(v)):d;
+const cat=k=>categories.find(c=>c[0]===k)||categories[categories.length-1];
+const safeURL=v=>{try{const u=new URL(String(v));return ["https:","http:"].includes(u.protocol)?u.href:""}catch{return ""}};
+let items=[],col=null,user=null,myId=null,ready=false,readOnly=false,tab="stock",group="all",editing=null,busy=false;
+let formCount=0,formThreshold=1,formSize="",formUnit="個",returnFocus=null,toastTimer,deleteTimer,deleteArmed=false,renderVersion=0;
+const collapsed=new Set(),pending=new Map(),inflight=new Map(),chains=new Map();let formOrig=null,formAddId="";
+const newId=()=>{try{return crypto.randomUUID()}catch{return Date.now().toString(36)+Math.random().toString(36).slice(2)}};
+try{const remembered=localStorage.getItem("ouchi-stock-tab");if(["stock","search","buy"].includes(remembered))tab=remembered}catch{}
+const canWrite=()=>!!col&&ready&&!readOnly;
+const low=i=>num(i.count)<=num(i.threshold,1);
+// 送信待ち・送信中の増減を、画面上だけ先に反映する
+function visibleItems(){return items.map(i=>{const d=(pending.get(i.id)?.delta||0)+(inflight.get(i.id)?.delta||0);return d?{...i,count:Math.max(0,num(i.count)+d),updatedBy:myId,updatedAt:Date.now()}:i})}
+function toast(message){clearTimeout(toastTimer);$("toast").textContent=message;$("toast").hidden=false;toastTimer=setTimeout(()=>$("toast").hidden=true,5500)}
+function banner(message){$("connection-banner").textContent=message;$("connection-banner").hidden=!message}
+function error(code,write=false){
+if(code==="unauthorized"){
+for(const p of pending.values())clearTimeout(p.timer);
+pending.clear();ready=false;
+banner("合言葉が違います。設定から入れ直してください");
+}else if(code==="not_found")toast("このアイテムはもう削除されています");
+else toast((write?"保存できませんでした":"読み込めませんでした")+"。電波を確認してもう一度お試しください");
+render();
+}
+function relative(t){const s=Math.max(0,Math.floor((Date.now()-num(t))/1000));if(!t)return "まだありません";if(s<60)return "たった今";if(s<3600)return Math.floor(s/60)+"分前";if(s<86400)return Math.floor(s/3600)+"時間前";return Math.floor(s/86400)+"日前"}
+function namesInRender(latest,editItem){
+const name=i=>i?.updatedBy||"家族";
+$("shared-status").textContent=latest?"夫婦で共有中 · 最終更新 "+name(latest)+" "+relative(latest.updatedAt):"夫婦で共有中 · 最終更新 まだありません";
+$("edit-status").textContent=editItem?"最終更新: "+name(editItem)+"・"+relative(editItem.updatedAt):"";
+}
+function tile(i,full=false){const c=cat(i.category);return `<div class="tile ${c[2]}" aria-hidden="true">${esc(c[1][0])}${full&&i.size?`<span class="size">${esc(i.size)}</span>`:""}${full?`<span class="badge number ${num(i.count)===0?"zero":low(i)?"low":""}">${esc(num(i.count))}</span>`:""}</div>`}
+function stepper(i){return `<div class="stepper"><button data-change="-1" data-id="${esc(i.id)}" aria-label="${esc(i.name)}を1減らす" ${!canWrite()||num(i.count)<=0?"disabled":""}><span>−</span></button><output class="number">${esc(num(i.count))}</output><button data-change="1" data-id="${esc(i.id)}" aria-label="${esc(i.name)}を1増やす" ${!canWrite()?"disabled":""}><span>+</span></button></div>`}
+function card(i){return `<article class="stock-card"><button class="card-body" data-edit="${esc(i.id)}" aria-label="${esc(i.name)}の詳細">${tile(i,true)}<span class="product-name">${esc(i.name)}</span></button>${stepper(i)}</article>`}
+function row(i,buy=false){const url=safeURL(i.url);return `<article class="list-row"><button class="row-body" data-edit="${esc(i.id)}">${tile(i)}<span class="row-info"><strong>${esc(i.name)}</strong>${i.size?`<p class="muted">${esc(i.size)}</p>`:""}<p class="${buy?"low-text":"muted"}">残り <span class="number">${esc(num(i.count))}</span>${esc(i.unit||"個")}</p>${buy&&(i.store||i.price!=null)?`<p class="muted">${esc(i.store)}${i.price!=null?" ¥"+esc(num(i.price).toLocaleString("ja-JP")):""}</p>`:""}</span></button>${buy?`<div class="row-actions">${url?`<a class="store-link" href="${esc(url)}" target="_blank" rel="noopener">お店で見る ↗</a>`:""}<button class="primary" data-change="1" data-id="${esc(i.id)}" ${!canWrite()?"disabled":""}>買った +1</button></div>`:stepper(i)}</article>`}
+function renderSearch(all){
+const q=$("search-input").value.trim().toLocaleLowerCase();
+if(q){const matches=all.filter(i=>[i.name,i.memo,i.store].some(v=>String(v||"").toLocaleLowerCase().includes(q)));$("search-content").innerHTML=`<p class="muted">${matches.length}件のアイテム</p><div class="list">${matches.map(i=>row(i)).join("")}</div>${matches.length?"":'<div class="empty">該当するアイテムがありません</div>'}`}
+else $("search-content").innerHTML=`<h2>カテゴリから登録する</h2><div class="category-grid">${categories.map(c=>`<button class="category-card" data-add="${c[0]}" ${!canWrite()?"disabled":""}>${tile({category:c[0]})}<span><strong>${c[1]}</strong><small>${all.filter(i=>cat(i.category)[0]===c[0]).length}件登録</small></span></button>`).join("")}</div>`;
+}
+function render(){
+const active=document.activeElement;
+const focusKey=active?.dataset?.change!==undefined?{id:active.dataset.id,change:active.dataset.change}:null;
+const all=visibleItems(),lows=all.filter(low).sort((a,b)=>num(a.count)-num(b.count));
+$("stock-view").hidden=tab!=="stock";$("search-view").hidden=tab!=="search";$("buy-view").hidden=tab!=="buy";
+document.querySelectorAll("[data-tab]").forEach(b=>{b.classList.toggle("active",b.dataset.tab===tab);b.setAttribute("aria-current",b.dataset.tab===tab?"page":"false")});
+$("buy-badge").hidden=!lows.length;$("buy-badge").textContent=lows.length;
+let home=lows.length?`<div class="banner">買い足しどきのアイテムがあります（${lows.length}件）<br><button data-go-buy>買い足しリストへ ›</button></div>`:"";
+home+=`<div class="filters" aria-label="グループで絞り込み">${groups.map(g=>`<button class="chip ${group===g[0]?"selected":""}" data-group="${g[0]}" aria-pressed="${group===g[0]}">${g[1]}</button>`).join("")}</div>`;
+if(!all.length)home+=`<div class="empty"><h2>まだストックがありません</h2><p>右下の＋か『探す』からおむつやミルクを登録しましょう</p><button class="primary" data-add="diaper" ${!canWrite()?"disabled":""}>最初のアイテムを登録</button></div>`;
+else{
+let sections=0;
+for(const c of categories){
+const list=all.filter(i=>cat(i.category)[0]===c[0]);if(!list.length||(group!=="all"&&group!==c[2]))continue;sections++;
+const n=list.filter(low).length;
+home+=`<section class="section"><div class="section-head"><button class="section-toggle" data-collapse="${c[0]}" aria-expanded="${!collapsed.has(c[0])}"><span aria-hidden="true">${collapsed.has(c[0])?"›":"⌄"}</span><span><strong>${c[1]}</strong><small>${list.length}種${n?` <em>・残りわずか ${n}</em>`:""}</small></span></button><button class="icon-button" data-add="${c[0]}" aria-label="${c[1]}を追加" ${!canWrite()?"disabled":""}>+</button></div>${collapsed.has(c[0])?"":`<div class="grid">${list.map(card).join("")}</div>`}</section>`;
+}if(!sections)home+='<div class="empty">このグループにはまだストックがありません</div>';
+}
+$("stock-view").innerHTML=home;
+renderSearch(all);
+$("buy-view").innerHTML=`<div class="page-head"><h2>買い足しリスト <span class="muted">${lows.length}件</span></h2><button class="secondary" id="copy-list" ${!lows.length?"disabled":""}>コピー</button></div><textarea id="copy-text" class="copy-fallback" readonly aria-label="買い足しリスト（選択してコピー）" hidden></textarea>${lows.length?`<div class="list">${lows.map(i=>row(i,true)).join("")}</div>`:'<div class="empty"><h2>今は買い足すものはありません</h2></div>'}`;
+document.querySelectorAll("[data-write]").forEach(b=>b.disabled=!canWrite()||busy);
+if(!$("modal").hidden)lockForm();
+const latest=[...all].sort((a,b)=>num(b.updatedAt)-num(a.updatedAt))[0];
+namesInRender(latest,all.find(i=>i.id===editing));
+if(focusKey){const match=[...document.querySelectorAll("[data-change]")].find(b=>b.dataset.id===focusKey.id&&b.dataset.change===focusKey.change&&b.closest("section")&&!b.closest("section").hidden);if(match&&!match.disabled)match.focus({preventScroll:true})}
+}
+function switchTab(next){tab=next;try{localStorage.setItem("ouchi-stock-tab",tab)}catch{}render();window.scrollTo({top:0,behavior:"instant"})}
+function queue(id,operation){
+const prior=chains.get(id)||Promise.resolve();
+const next=prior.catch(()=>{}).then(operation);chains.set(id,next);
+next.then(()=>{if(chains.get(id)===next)chains.delete(id)},()=>{if(chains.get(id)===next)chains.delete(id)});
+return next;
+}
+// 増減は「差分」で送る。電波が悪くて失敗したら同じ操作IDで後から再送する（サーバー側で二重反映を防ぐ）
+function flush(id){
+return queue(id,async()=>{
+let entry=inflight.get(id);
+if(!entry){const p=pending.get(id);if(!p)return;clearTimeout(p.timer);pending.delete(id);entry={delta:p.delta,op:newId()};inflight.set(id,entry)}
+if(!canWrite())return;
+try{await call("adjust",{id,delta:entry.delta,op:entry.op});inflight.delete(id)}
+catch(e){
+if(e?.code==="network"||e?.code==="busy"){toast("電波が不安定なため未送信です。つながったら自動で送ります");return}
+inflight.delete(id);error(e?.code,true);
+}finally{render()}
+});
+}
+function retryUnsent(){for(const id of new Set([...inflight.keys(),...pending.keys()]))flush(id).catch(()=>{})}
+function change(id,delta){
+if(!canWrite())return;
+const i=visibleItems().find(i=>i.id===id);if(!i)return;
+const d=Math.max(-num(i.count),delta);if(!d)return;
+const entry=pending.get(id)||{delta:0,timer:null};clearTimeout(entry.timer);
+entry.delta+=d;pending.set(id,entry);
+entry.timer=setTimeout(()=>flush(id).catch(()=>{}),600);render();
+}
+function choices(){
+const sizes=[["","なし"],["新生児","新生児"],["S","S"],["M","M"],["L","L"],["BIG","BIG"],["other","その他"]];
+$("size-choices").innerHTML=sizes.map((s,n)=>`<button id="size-option-${n}" type="button" class="chip ${formSize===s[0]?"selected":""}" aria-pressed="${formSize===s[0]}" data-size="${s[0]}">${s[1]}</button>`).join("");
+const units=[...new Set(["個","パック","箱","袋","本",formUnit])];
+$("unit-choices").innerHTML=units.map((u,n)=>`<button id="unit-option-${n}" type="button" class="chip ${formUnit===u?"selected":""}" aria-pressed="${formUnit===u}" data-unit="${esc(u)}">${esc(u)}</button>`).join("");
+$("item-size-other").hidden=formSize!=="other";updateNumbers();lockForm();
+}
+function updateNumbers(){$("item-count").value=formCount;$("item-threshold").value=formThreshold;$("count-minus").disabled=!canWrite()||busy||formCount<=0;$("threshold-minus").disabled=!canWrite()||busy||formThreshold<=0}
+function lockForm(){const locked=!canWrite()||busy;[...$("item-form").elements].forEach(e=>{if(e.tagName!=="OUTPUT")e.disabled=locked});updateNumbers()}
+function resetDelete(){clearTimeout(deleteTimer);deleteArmed=false;$("delete-item").textContent="削除"}
+function openSheet(id=null,preset="diaper"){
+const i=id?visibleItems().find(i=>i.id===id):null;if(id&&!i)return;if(!id&&!canWrite())return;
+returnFocus=document.activeElement;editing=id;formOrig=i?{...i}:null;formAddId=newId();busy=false;resetDelete();$("item-form").reset();
+$("sheet-title").textContent=id?"ストックを編集":"ストックを追加";$("save-item").textContent=id?"保存":"ストックに追加";
+$("delete-item").hidden=!id;
+$("item-name").value=i?.name||"";$("item-category").value=i?cat(i.category)[0]:preset;
+formCount=num(i?.count);formThreshold=num(i?.threshold,1);
+const size=i?.size||"";formSize=["","新生児","S","M","L","BIG"].includes(size)?size:"other";$("item-size-other").value=formSize==="other"?size:"";
+formUnit=i?.unit||"個";
+for(const key of ["store","price","url","memo"])$("item-"+key).value=i?.[key]??"";
+$("name-error").hidden=true;$("url-error").hidden=true;$("form-error").textContent="";$("item-name").removeAttribute("aria-invalid");
+choices();$("modal").hidden=false;document.body.style.overflow="hidden";render();$("sheet").scrollTop=0;$("close-sheet").focus();
+}
+function closeSheet(){if(busy)return;$("modal").hidden=true;document.body.style.overflow="";editing=null;resetDelete();if(returnFocus?.isConnected)returnFocus.focus();else $("fab").focus()}
+async function save(e){
+e.preventDefault();if(!canWrite()||busy)return;
+const name=$("item-name").value.trim(),rawURL=$("item-url").value.trim(),priceText=$("item-price").value;
+$("name-error").hidden=!!name;$("item-name").setAttribute("aria-invalid",String(!name));
+if(!name){$("item-name").focus();return}
+$("url-error").hidden=!rawURL||!!safeURL(rawURL);if(rawURL&&!safeURL(rawURL)){$("item-url").focus();return}
+if($("item-price").validity.badInput||(priceText!==""&&(!Number.isFinite(Number(priceText))||Number(priceText)<0))){$("form-error").textContent="価格は0以上の数値を入力してください";$("item-price").focus();return}
+const id=editing;
+const obj={name,category:$("item-category").value,size:formSize==="other"?$("item-size-other").value.trim():formSize,threshold:formThreshold,unit:formUnit,store:$("item-store").value.trim(),price:priceText===""?null:Number(priceText),url:rawURL?safeURL(rawURL):"",memo:$("item-memo").value.trim()};
+busy=true;lockForm();$("form-error").textContent="";
+try{
+if(id){
+// 変えた項目だけ送る。在庫数は開いた時からの差分にして、相手の同時変更を消さない
+const changed={};for(const k in obj){const before=k==="url"?safeURL(formOrig?.url):(formOrig?.[k]??(k==="price"?null:""));if(obj[k]!==before)changed[k]=obj[k]}
+const delta=formCount-num(formOrig?.count);
+await flush(id);
+if(Object.keys(changed).length||delta)await queue(id,()=>call("update",{id,data:changed,delta,op:newId()}));
+}
+else await call("add",{id:formAddId,data:{...obj,count:formCount},op:"add-"+formAddId});
+busy=false;closeSheet();toast("保存しました");
+}catch(e){busy=false;$("form-error").textContent="保存できませんでした。入力内容を確認して再度お試しください";error(e?.code,true)}
+finally{busy=false;render()}
+}
+async function remove(){
+if(!canWrite()||busy||!editing)return;
+if(!deleteArmed){deleteArmed=true;$("delete-item").textContent="本当に削除";deleteTimer=setTimeout(resetDelete,3000);return}
+const id=editing;resetDelete();busy=true;lockForm();
+try{clearTimeout(pending.get(id)?.timer);pending.delete(id);inflight.delete(id);await queue(id,()=>call("delete",{id,op:newId()}));items=items.filter(i=>i.id!==id);busy=false;closeSheet();toast("削除しました")}
+catch(e){busy=false;$("form-error").textContent="削除できませんでした";error(e?.code,true)}
+finally{busy=false;render()}
+}
+async function copyList(){
+const text=visibleItems().filter(low).sort((a,b)=>num(a.count)-num(b.count)).map(i=>"・"+i.name+(i.size?" "+i.size:"")+"（残り"+num(i.count)+(i.unit||"個")+"）").join("\n");
+try{await navigator.clipboard.writeText(text);toast("コピーしました")}
+catch{const area=$("copy-text");area.hidden=false;area.value=text;area.focus();area.select();toast("リストを選択しました。コピーしてお使いください")}
+}
+document.addEventListener("click",e=>{
+const b=e.target.closest("button");if(!b||b.disabled)return;
+if(b.dataset.tab)switchTab(b.dataset.tab);
+else if(b.hasAttribute("data-go-buy"))switchTab("buy");
+else if(b.dataset.group){group=b.dataset.group;render()}
+else if(b.dataset.collapse){const k=b.dataset.collapse;collapsed.has(k)?collapsed.delete(k):collapsed.add(k);render()}
+else if(b.hasAttribute("data-add"))openSheet(null,b.dataset.add);
+else if(b.hasAttribute("data-edit"))openSheet(b.dataset.edit);
+else if(b.hasAttribute("data-change"))change(b.dataset.id,Number(b.dataset.change));
+else if(b.hasAttribute("data-size")){formSize=b.dataset.size;choices();$(b.id)?.focus();if(formSize==="other")$("item-size-other").focus()}
+else if(b.hasAttribute("data-unit")){formUnit=b.dataset.unit;choices();$(b.id)?.focus()}
+else if(b.id==="copy-list")copyList();
+});
+$("fab").onclick=()=>openSheet();$("close-sheet").onclick=closeSheet;
+$("modal").onclick=e=>{if(e.target===$("modal"))closeSheet()};
+document.addEventListener("keydown",e=>{
+if($("modal").hidden)return;
+if(e.key==="Escape"){e.preventDefault();closeSheet()}
+if(e.key==="Tab"){
+const focusable=[...$("sheet").querySelectorAll("button,input,select,textarea,[tabindex]")].filter(e=>!e.disabled&&!e.hidden&&e.getClientRects().length);
+const first=focusable[0],last=focusable[focusable.length-1];
+if(e.shiftKey&&(document.activeElement===first||!$("sheet").contains(document.activeElement))){e.preventDefault();last?.focus()}
+else if(!e.shiftKey&&(document.activeElement===last||!$("sheet").contains(document.activeElement))){e.preventDefault();first?.focus()}
+}
+});
+$("search-input").oninput=()=>renderSearch(visibleItems());
+$("item-form").onsubmit=save;$("delete-item").onclick=remove;
+for(const [id,target,delta] of [["count-minus","count",-1],["count-plus","count",1],["threshold-minus","threshold",-1],["threshold-plus","threshold",1]]){
+$(id).onclick=()=>{if(!canWrite()||busy)return;if(target==="count")formCount=Math.max(0,formCount+delta);else formThreshold=Math.max(0,formThreshold+delta);updateNumbers()};
+}
+$("item-category").innerHTML=categories.map(c=>`<option value="${c[0]}">${c[1]}</option>`).join("");
+render();
+setInterval(()=>{const all=visibleItems();namesInRender([...all].sort((a,b)=>num(b.updatedAt)-num(a.updatedAt))[0],all.find(i=>i.id===editing))},60000);
+
+// ---- スプレッドシート(Apps Script)との通信 ----
+const store={get(k){try{return localStorage.getItem("ouchi-stock-"+k)||""}catch{return ""}},set(k,v){try{localStorage.setItem("ouchi-stock-"+k,v)}catch{}}};
+let api={url:store.get("api"),key:store.get("key")};
+myId=store.get("name")||null;
+let writes=0,lastWriteAt=0,polling=null;
+try{
+const q=new URLSearchParams(location.search);
+if(q.get("api")&&q.get("key")){api={url:q.get("api"),key:q.get("key")};store.set("api",api.url);store.set("key",api.key)}
+if(q.has("api")||q.has("key"))history.replaceState(null,"",location.pathname+location.hash);
+}catch{}
+// rev = サーバーの更新番号。後から届いた古い応答で画面が巻き戻らないようにする
+let appliedRev=-1,gen=0;
+function applyItems(json,g){
+if(g!==gen||!Array.isArray(json?.items))return;
+const r=Number(json.rev);if(Number.isFinite(r)){if(r<appliedRev)return;appliedRev=r}
+items=json.items.map(i=>({...i}));ready=true;banner("");render();
+}
+async function request(url,opts,g){
+const ctl=new AbortController(),t=setTimeout(()=>ctl.abort(),20000);
+try{
+const res=await fetch(url,{...opts,signal:ctl.signal});
+if(!res.ok)throw {code:"network"};
+const json=await res.json();
+if(!json||typeof json!=="object")throw {code:"network"};
+return json;
+}catch(e){throw e&&e.code?e:{code:"network"}}
+finally{clearTimeout(t)}
+}
+async function call(action,body){
+const g=gen;
+const json=await request(api.url,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({key:api.key,by:myId||"",action,...body})},g);
+applyItems(json,g);
+if(!json.ok)throw {code:json.code||"server"};
+}
+col={};
+async function load(){
+if(!api.url||!api.key)return;
+const g=gen;
+try{
+const json=await request(api.url+(api.url.includes("?")?"&":"?")+"key="+encodeURIComponent(api.key),{cache:"no-store"},g);
+if(g!==gen)return;
+if(!json.ok){error(json.code);return}
+applyItems(json,g);retryUnsent();
+}catch{if(g===gen&&!ready)banner("保存先につながりません。電波か設定を確認してください")}
+}
+function startPolling(){clearInterval(polling);polling=setInterval(()=>{if(document.visibilityState==="visible")load()},8000)}
+document.addEventListener("visibilitychange",()=>{
+if(document.visibilityState==="hidden")for(const id of pending.keys())flush(id).catch(()=>{});
+else load();
+});
+window.addEventListener("focus",load);window.addEventListener("online",load);
+
+// ---- 設定 ----
+const names=["パパ","ママ"];let pickName="";
+function nameChoices(){
+$("name-choices").innerHTML=[...names,"その他"].map((n,k)=>`<button id="name-option-${k}" type="button" class="chip ${pickName===n||(n==="その他"&&pickName==="other")?"selected":""}" data-name="${n==="その他"?"other":n}">${n}</button>`).join("");
+$("my-name-other").hidden=pickName!=="other";
+}
+function openSettings(){
+returnFocus=document.activeElement;
+pickName=!myId?"":names.includes(myId)?myId:"other";$("my-name-other").value=pickName==="other"?myId:"";
+$("api-url").value=api.url;$("api-key").value=api.key;$("settings-error").textContent="";$("invite-text").hidden=true;
+nameChoices();$("settings-modal").hidden=false;document.body.style.overflow="hidden";$("close-settings").focus();
+}
+function closeSettings(){$("settings-modal").hidden=true;document.body.style.overflow="";if(returnFocus?.isConnected)returnFocus.focus()}
+$("open-settings").onclick=openSettings;$("close-settings").onclick=closeSettings;
+$("settings-modal").onclick=e=>{if(e.target===$("settings-modal"))closeSettings()};
+$("name-choices").onclick=e=>{const b=e.target.closest("[data-name]");if(!b)return;e.stopPropagation();pickName=b.dataset.name;nameChoices();if(pickName==="other")$("my-name-other").focus()};
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("settings-modal").hidden)closeSettings()});
+$("settings-form").onsubmit=async e=>{
+e.preventDefault();
+const name=pickName==="other"?$("my-name-other").value.trim():pickName;
+const url=$("api-url").value.trim(),key=$("api-key").value.trim();
+if(!name){$("settings-error").textContent="呼び名を選んでください";return}
+if(!/^https:\/\/script\.google(usercontent)?\.com\//.test(url)){$("settings-error").textContent="保存先URLは https://script.google.com/… の形で入れてください";return}
+if(!key){$("settings-error").textContent="合言葉を入れてください";return}
+const switched=url!==api.url||key!==api.key;
+myId=name;store.set("name",name);api={url,key};store.set("api",url);store.set("key",key);
+if(switched){gen++;appliedRev=-1;items=[];for(const p of pending.values())clearTimeout(p.timer);pending.clear();inflight.clear();chains.clear();ready=false}
+closeSettings();render();await load();if(ready)toast("つながりました");startPolling();
+};
+$("copy-invite").onclick=async()=>{
+const url=$("api-url").value.trim()||api.url,key=$("api-key").value.trim()||api.key;
+if(!url||!key){$("settings-error").textContent="先に保存先URLと合言葉を入れてください";return}
+const link=location.origin+location.pathname+"?"+new URLSearchParams({api:url,key});
+try{await navigator.clipboard.writeText(link);toast("共有リンクをコピーしました")}
+catch{const t=$("invite-text");t.hidden=false;t.value=link;t.focus();t.select()}
+};
+
+if(api.url&&api.key&&myId){banner("読み込み中…");load();startPolling()}
+else{banner("はじめに設定をしてください（右上の歯車）");openSettings()}
+})();
+</script>
+</body>
+</html>
