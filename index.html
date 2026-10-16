@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>おうちストック</title>
-<meta name="theme-color" content="#F2F5FC">
+<meta name="theme-color" content="#F5F0E8">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="おうちストック">
@@ -15,26 +15,27 @@
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Zen+Maru+Gothic:wght@500;700&display=swap" rel="stylesheet">
 <style>
 :root {
-  --h: 255;
-  --bg: oklch(0.965 0.018 var(--h));
-  --surface: oklch(0.995 0.004 var(--h));
-  --fg: oklch(0.28 0.065 var(--h));
-  --muted: oklch(0.47 0.045 var(--h));
-  --ink-soft: oklch(0.39 0.075 var(--h));
-  --line: oklch(0.76 0.045 var(--h));
-  --accent: oklch(0.4 0.13 var(--h));
-  --accent-soft: oklch(0.9 0.045 var(--h));
-  --on-accent: oklch(0.99 0.006 var(--h));
-  --baby: oklch(0.89 0.055 var(--h));
-  --feed: oklch(0.93 0.035 var(--h));
-  --mama: oklch(0.83 0.075 var(--h));
-  --home: oklch(0.91 0.025 var(--h));
-  --dot: oklch(0.5 0.06 var(--h) / 0.12);
-  --overlay: oklch(0.18 0.05 var(--h) / 0.65);
-  --transparent: oklch(0.96 0.015 var(--h) / 0);
-  --focus: oklch(0.48 0.16 var(--h));
+  --h: 70;
+  --sat: 0.4;
+  --bg: oklch(0.965 calc(0.018 * var(--sat)) var(--h));
+  --surface: oklch(0.995 calc(0.004 * var(--sat)) var(--h));
+  --fg: oklch(0.28 calc(0.065 * var(--sat)) var(--h));
+  --muted: oklch(0.47 calc(0.045 * var(--sat)) var(--h));
+  --ink-soft: oklch(0.39 calc(0.075 * var(--sat)) var(--h));
+  --line: oklch(0.76 calc(0.045 * var(--sat)) var(--h));
+  --accent: oklch(0.4 calc(0.13 * var(--sat)) var(--h));
+  --accent-soft: oklch(0.9 calc(0.045 * var(--sat)) var(--h));
+  --on-accent: oklch(0.99 calc(0.006 * var(--sat)) var(--h));
+  --baby: oklch(0.89 calc(0.055 * var(--sat)) var(--h));
+  --feed: oklch(0.93 calc(0.035 * var(--sat)) var(--h));
+  --mama: oklch(0.83 calc(0.075 * var(--sat)) var(--h));
+  --home: oklch(0.91 calc(0.025 * var(--sat)) var(--h));
+  --dot: oklch(0.5 calc(0.06 * var(--sat)) var(--h) / 0.12);
+  --overlay: oklch(0.18 calc(0.05 * var(--sat)) var(--h) / 0.65);
+  --transparent: oklch(0.96 calc(0.015 * var(--sat)) var(--h) / 0);
+  --focus: oklch(0.48 calc(0.16 * var(--sat)) var(--h));
   --chip-h: var(--h);
-  --hue-color: oklch(0.62 0.17 var(--chip-h));
+  --hue-color: oklch(var(--chip-l, 0.62) calc(0.17 * var(--chip-s, 1)) var(--chip-h));
   --card: var(--surface);
   --shadow: 0 4px 0 var(--ink-soft);
   --shadow-small: 0 3px 0 var(--ink-soft);
@@ -52,45 +53,45 @@
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: oklch(0.19 0.025 var(--h));
-    --surface: oklch(0.255 0.03 var(--h));
-    --fg: oklch(0.95 0.018 var(--h));
-    --muted: oklch(0.76 0.035 var(--h));
-    --ink-soft: oklch(0.65 0.075 var(--h));
-    --line: oklch(0.45 0.045 var(--h));
-    --accent: oklch(0.34 0.095 var(--h));
-    --accent-soft: oklch(0.35 0.055 var(--h));
-    --on-accent: oklch(0.99 0.006 var(--h));
-    --baby: oklch(0.36 0.065 var(--h));
-    --feed: oklch(0.31 0.04 var(--h));
-    --mama: oklch(0.4 0.08 var(--h));
-    --home: oklch(0.33 0.03 var(--h));
-    --dot: oklch(0.7 0.05 var(--h) / 0.065);
-    --overlay: oklch(0.12 0.025 var(--h) / 0.8);
-    --transparent: oklch(0.19 0.025 var(--h) / 0);
-    --focus: oklch(0.82 0.1 var(--h));
+    --bg: oklch(0.19 calc(0.025 * var(--sat)) var(--h));
+    --surface: oklch(0.255 calc(0.03 * var(--sat)) var(--h));
+    --fg: oklch(0.95 calc(0.018 * var(--sat)) var(--h));
+    --muted: oklch(0.76 calc(0.035 * var(--sat)) var(--h));
+    --ink-soft: oklch(0.65 calc(0.075 * var(--sat)) var(--h));
+    --line: oklch(0.45 calc(0.045 * var(--sat)) var(--h));
+    --accent: oklch(0.34 calc(0.095 * var(--sat)) var(--h));
+    --accent-soft: oklch(0.35 calc(0.055 * var(--sat)) var(--h));
+    --on-accent: oklch(0.99 calc(0.006 * var(--sat)) var(--h));
+    --baby: oklch(0.36 calc(0.065 * var(--sat)) var(--h));
+    --feed: oklch(0.31 calc(0.04 * var(--sat)) var(--h));
+    --mama: oklch(0.4 calc(0.08 * var(--sat)) var(--h));
+    --home: oklch(0.33 calc(0.03 * var(--sat)) var(--h));
+    --dot: oklch(0.7 calc(0.05 * var(--sat)) var(--h) / 0.065);
+    --overlay: oklch(0.12 calc(0.025 * var(--sat)) var(--h) / 0.8);
+    --transparent: oklch(0.19 calc(0.025 * var(--sat)) var(--h) / 0);
+    --focus: oklch(0.82 calc(0.1 * var(--sat)) var(--h));
     color-scheme: dark;
   }
 }
 
 :root[data-theme="dark"] {
-  --bg: oklch(0.19 0.025 var(--h));
-  --surface: oklch(0.255 0.03 var(--h));
-  --fg: oklch(0.95 0.018 var(--h));
-  --muted: oklch(0.76 0.035 var(--h));
-  --ink-soft: oklch(0.65 0.075 var(--h));
-  --line: oklch(0.45 0.045 var(--h));
-  --accent: oklch(0.34 0.095 var(--h));
-  --accent-soft: oklch(0.35 0.055 var(--h));
-  --on-accent: oklch(0.99 0.006 var(--h));
-  --baby: oklch(0.36 0.065 var(--h));
-  --feed: oklch(0.31 0.04 var(--h));
-  --mama: oklch(0.4 0.08 var(--h));
-  --home: oklch(0.33 0.03 var(--h));
-  --dot: oklch(0.7 0.05 var(--h) / 0.065);
-  --overlay: oklch(0.12 0.025 var(--h) / 0.8);
-  --transparent: oklch(0.19 0.025 var(--h) / 0);
-  --focus: oklch(0.82 0.1 var(--h));
+  --bg: oklch(0.19 calc(0.025 * var(--sat)) var(--h));
+  --surface: oklch(0.255 calc(0.03 * var(--sat)) var(--h));
+  --fg: oklch(0.95 calc(0.018 * var(--sat)) var(--h));
+  --muted: oklch(0.76 calc(0.035 * var(--sat)) var(--h));
+  --ink-soft: oklch(0.65 calc(0.075 * var(--sat)) var(--h));
+  --line: oklch(0.45 calc(0.045 * var(--sat)) var(--h));
+  --accent: oklch(0.34 calc(0.095 * var(--sat)) var(--h));
+  --accent-soft: oklch(0.35 calc(0.055 * var(--sat)) var(--h));
+  --on-accent: oklch(0.99 calc(0.006 * var(--sat)) var(--h));
+  --baby: oklch(0.36 calc(0.065 * var(--sat)) var(--h));
+  --feed: oklch(0.31 calc(0.04 * var(--sat)) var(--h));
+  --mama: oklch(0.4 calc(0.08 * var(--sat)) var(--h));
+  --home: oklch(0.33 calc(0.03 * var(--sat)) var(--h));
+  --dot: oklch(0.7 calc(0.05 * var(--sat)) var(--h) / 0.065);
+  --overlay: oklch(0.12 calc(0.025 * var(--sat)) var(--h) / 0.8);
+  --transparent: oklch(0.19 calc(0.025 * var(--sat)) var(--h) / 0);
+  --focus: oklch(0.82 calc(0.1 * var(--sat)) var(--h));
   color-scheme: dark;
 }
 
@@ -1138,7 +1139,7 @@ label .error {
 }
 
 .hue-chip {
-  --hue-color: oklch(0.62 0.17 var(--chip-h));
+  --hue-color: oklch(var(--chip-l, 0.62) calc(0.17 * var(--chip-s, 1)) var(--chip-h));
   flex: 0 0 44px;
   width: 44px;
   height: 44px;
@@ -1303,6 +1304,7 @@ label .error {
     scroll-behavior: auto !important;
   }
 }
+.catalog-title{margin:22px 0 6px}.catalog-group{font-size:14px;color:var(--muted);margin:22px 0 4px}.catalog-card{display:flex;flex-direction:column;gap:8px}.catalog-card .card-body{flex:1}.catalog-card>button{width:100%;min-height:44px;font-size:13px}.catalog-own{margin-top:22px}.catalog-own .primary{width:100%}.tile.has-photo{background:var(--surface)}
 </style>
 </head>
 <body>
@@ -1311,7 +1313,7 @@ label .error {
 <div id="connection-banner" class="banner" role="status" hidden></div>
 <section id="stock-view" aria-label="ストック"></section>
 <section id="search-view" aria-label="探す" hidden>
-<input id="search-input" class="search" type="search" placeholder="登録済みのアイテムを探す（商品名・ブランド）" aria-label="登録済みのアイテムを探す（商品名・ブランド）">
+<input id="search-input" class="search" type="search" placeholder="商品名で探す（例：牛乳、おむつ）" aria-label="商品名で探す">
 <div id="search-content"></div>
 </section>
 <section id="buy-view" aria-label="買い足し" hidden></section>
@@ -1358,13 +1360,15 @@ label .error {
 </section>
 </div>
 <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+<script src="catalog.js"></script>
 <script>
 (()=>{
 "use strict";
 const $=id=>document.getElementById(id);
 const categories=[
-["diaper","おむつ","baby"],["wipes","おしりふき","baby"],["milk","ミルク","feed"],["babyfood","ベビーフード","feed"],["skincare","ベビースキンケア","baby"],["bath","おふろ・入浴","baby"],["hygiene","衛生・ケア用品","baby"],["teeth","歯みがき・乳歯ケア","baby"],["bottle","哺乳びん・乳首","feed"],["pump","さく乳器・母乳保存","feed"],["pad","母乳パッド・授乳ケア","feed"],["pacifier","おしゃぶり・歯固め","baby"],["tableware","ベビー食器・食具","feed"],["mug","マグ・ドリンクボトル","feed"],["mamasupp","ママ向けサプリメント","mama"],["mamadrink","ママ向け飲料","mama"],["maternity","マタニティスキンケア","mama"],["inner","産前産後インナー","mama"],["household","日用品","home"],["other","その他","home"]];
-const groups=[["all","全て"],["baby","ベビー用品"],["feed","離乳食・授乳"],["mama","ママ用品"],["home","日用品"]];
+["diaper","おむつ","baby"],["wipes","おしりふき","baby"],["milk","ミルク","feed"],["babyfood","ベビーフード","feed"],["skincare","ベビースキンケア","baby"],["bath","おふろ・入浴","baby"],["hygiene","衛生・ケア用品","baby"],["teeth","歯みがき・乳歯ケア","baby"],["bottle","哺乳びん・乳首","feed"],["pump","さく乳器・母乳保存","feed"],["pad","母乳パッド・授乳ケア","feed"],["pacifier","おしゃぶり・歯固め","baby"],["tableware","ベビー食器・食具","feed"],["mug","マグ・ドリンクボトル","feed"],["mamasupp","ママ向けサプリメント","mama"],["mamadrink","ママ向け飲料","mama"],["maternity","マタニティスキンケア","mama"],["inner","産前産後インナー","mama"],["veg","野菜","food"],["fruit","果物","food"],["meat","肉","food"],["fish","魚","food"],["dairy","卵・乳・大豆製品","food"],["staple","米・パン・麺","food"],["seasoning","調味料","food"],["frozen","冷凍食品","food"],["drink","飲み物","food"],["paper","紙製品","home"],["laundry","洗濯用品","home"],["kitchen","キッチン用品","home"],["cleaning","掃除用品","home"],["bath_body","バス・洗面","home"],["household","その他の日用品","home"],["other","その他","home"]];
+const groups=[["all","全て"],["food","食材"],["home","日用品"],["baby","ベビー用品"],["feed","離乳食・授乳"],["mama","ママ用品"]];
+const CATALOG_LIST=Array.isArray(window.CATALOG)?window.CATALOG:[];let catalogCat=null;const catalogImg=id=>new URL("img/"+id+".webp",location.href).href;
 const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const num=(v,d=0)=>Number.isFinite(Number(v))&&v!==null&&v!==""?Math.max(0,Number(v)):d;
 const cat=k=>categories.find(c=>c[0]===k)||categories[categories.length-1];
@@ -1401,9 +1405,33 @@ function card(i){return `<article class="stock-card"><button class="card-body" d
 function row(i,buy=false){const url=safeURL(i.url);return `<article class="list-row"><button class="row-body" data-edit="${esc(i.id)}">${tile(i)}<span class="row-info"><strong>${esc(i.name)}</strong>${i.size?`<p class="muted">${esc(i.size)}</p>`:""}<p class="${buy?"low-text":"muted"}">残り <span class="number">${esc(num(i.count))}</span>${esc(i.unit||"個")}</p>${buy&&(i.store||i.price!=null)?`<p class="muted">${esc(i.store)}${i.price!=null?" ¥"+esc(num(i.price).toLocaleString("ja-JP")):""}</p>`:""}</span></button>${buy?`<div class="row-actions">${url?`<a class="store-link" href="${esc(url)}" target="_blank" rel="noopener">お店で見る ↗</a>`:""}<button class="primary" data-change="1" data-id="${esc(i.id)}" ${!canWrite()?"disabled":""}>買った +1</button></div>`:stepper(i)}</article>`}
 function renderSearch(all){
 const q=$("search-input").value.trim().toLocaleLowerCase();
-if(q){const matches=all.filter(i=>[i.name,i.memo,i.store].some(v=>String(v||"").toLocaleLowerCase().includes(q)));$("search-content").innerHTML=`<p class="muted">${matches.length}件のアイテム</p><div class="list">${matches.map(i=>row(i)).join("")}</div>${matches.length?"":'<div class="empty">該当するアイテムがありません</div>'}`}
-else $("search-content").innerHTML=`<h2>カテゴリから登録する</h2><div class="category-grid">${categories.map(c=>`<button class="category-card" data-add="${c[0]}" ${!canWrite()?"disabled":""}>${tile({category:c[0]})}<span><strong>${c[1]}</strong><small>${all.filter(i=>cat(i.category)[0]===c[0]).length}件登録</small></span></button>`).join("")}</div>`;
+const has=c=>all.find(i=>i.name===c.name&&cat(i.category)[0]===c.category);
+const catalogCard=c=>{const mine=has(c);return `<article class="stock-card catalog-card"><div class="card-body">${tile({category:c.category,image:catalogImg(c.id)})}<span class="product-name">${esc(c.name)}</span></div>${mine?`<button class="secondary" data-edit="${esc(mine.id)}">登録済み ✓</button>`:`<button class="primary" data-catalog="${esc(c.id)}" ${!canWrite()?"disabled":""}>＋ 追加</button>`}</article>`};
+if(q){
+const matches=all.filter(i=>[i.name,i.memo,i.store].some(v=>String(v||"").toLocaleLowerCase().includes(q)));
+const cm=CATALOG_LIST.filter(c=>c.name.toLocaleLowerCase().includes(q)&&!has(c));
+$("search-content").innerHTML=`<p class="muted">登録済み ${matches.length}件</p><div class="list">${matches.map(i=>row(i)).join("")}</div>${cm.length?`<h2 class="catalog-title">よく買うものから追加</h2><div class="grid">${cm.map(catalogCard).join("")}</div>`:""}${matches.length||cm.length?"":'<div class="empty">該当するアイテムがありません</div>'}`;
+}else if(catalogCat){
+const c=cat(catalogCat),list=CATALOG_LIST.filter(x=>x.category===c[0]);
+$("search-content").innerHTML=`<div class="page-head"><button class="secondary" data-crumb>‹ カテゴリ一覧</button></div><h2 class="catalog-title">${esc(c[1])}</h2>${list.length?`<p class="hint">押すだけでストックに入ります（在庫1・なくなったら買い足し）</p><div class="grid">${list.map(catalogCard).join("")}</div>`:""}<div class="catalog-own"><button class="primary" data-add="${c[0]}" ${!canWrite()?"disabled":""}>自分で商品を登録する</button></div>`;
 }
+else $("search-content").innerHTML=`<h2>カテゴリから探す</h2>${groups.slice(1).map(g=>`<h3 class="catalog-group">${g[1]}</h3><div class="category-grid">${categories.filter(c=>c[2]===g[0]).map(c=>{const n=CATALOG_LIST.filter(x=>x.category===c[0]).length,m=all.filter(i=>cat(i.category)[0]===c[0]).length,first=CATALOG_LIST.find(x=>x.category===c[0]);return `<button class="category-card" data-browse="${c[0]}">${tile({category:c[0],image:first?catalogImg(first.id):""})}<span><strong>${c[1]}</strong><small>${n?n+"件 · ":""}${m}件登録</small></span></button>`}).join("")}</div>`).join("")}`;
+}
+let addingCatalog=new Set();
+async function addCatalog(id){
+const c=CATALOG_LIST.find(x=>x.id===id);if(!c||!canWrite()||addingCatalog.has(id))return;
+addingCatalog.add(id);
+const nid=newId();
+try{await call("add",{id:nid,data:{name:c.name,category:c.category,unit:c.unit||"個",threshold:0,count:1,image:catalogImg(c.id),size:"",store:"",price:null,url:"",memo:""},op:"add-"+nid});toast(c.name+"をストックに入れました")}
+catch(e){error(e?.code,true)}
+finally{addingCatalog.delete(id);render()}
+}
+$("search-content").addEventListener("click",e=>{
+const b=e.target.closest("button");if(!b||b.disabled)return;
+if(b.dataset.browse){catalogCat=b.dataset.browse;renderSearch(visibleItems());window.scrollTo({top:0,behavior:"instant"})}
+else if(b.hasAttribute("data-crumb")){catalogCat=null;renderSearch(visibleItems())}
+else if(b.dataset.catalog)addCatalog(b.dataset.catalog);
+});
 function render(){
 const active=document.activeElement;
 const focusKey=active?.dataset?.change!==undefined?{id:active.dataset.id,change:active.dataset.change}:null;
@@ -1413,7 +1441,7 @@ document.querySelectorAll("[data-tab]").forEach(b=>{b.classList.toggle("active",
 $("buy-badge").hidden=!lows.length;$("buy-badge").textContent=lows.length;
 let home=lows.length?`<div class="banner">買い足しどきのアイテムがあります（${lows.length}件）<br><button data-go-buy>買い足しリストへ ›</button></div>`:"";
 home+=`<div class="filters" aria-label="グループで絞り込み">${groups.map(g=>`<button class="chip ${group===g[0]?"selected":""}" data-group="${g[0]}" aria-pressed="${group===g[0]}">${g[1]}</button>`).join("")}</div>`;
-if(!all.length)home+=`<div class="empty"><h2>まだストックがありません</h2><p>右下の＋か『探す』からおむつやミルクを登録しましょう</p><button class="primary" data-add="diaper" ${!canWrite()?"disabled":""}>最初のアイテムを登録</button></div>`;
+if(!all.length)home+=`<div class="empty"><h2>まだストックがありません</h2><p>下の『探す』から、よく買う食材や日用品を押すだけで登録できます</p><button class="primary" data-add="diaper" ${!canWrite()?"disabled":""}>最初のアイテムを登録</button></div>`;
 else{
 let sections=0;
 for(const c of categories){
@@ -1641,12 +1669,13 @@ $("item-url").addEventListener("change",()=>{if(!formImage)fetchPhoto(true)});
 document.addEventListener("error",e=>{const t=e.target;if(t?.matches?.("img.photo")){t.closest(".tile")?.classList.remove("has-photo");t.remove()}},true);
 
 // ---- テーマ色（端末ごと） ----
-const hues=[["ブルー",255],["ミント",175],["グリーン",140],["マスタード",85],["オレンジ",55],["コーラル",25],["ピンク",355],["パープル",300]];
-function applyHue(h){document.documentElement.style.setProperty("--h",h);
-$("hue-choices").innerHTML=hues.map(([n,v])=>`<button type="button" class="hue-chip ${String(v)===String(h)?"selected":""}" style="--chip-h:${v}" data-hue="${v}" aria-label="${n}" aria-pressed="${String(v)===String(h)}"></button>`).join("");
+const hues=[["ベージュ",70,0.4,0.78],["キャメル",62,0.8,0.66],["ミルクティー",55,0.28,0.74],["ショコラ",45,0.55,0.48],["ホワイト",80,0.1,0.9]];
+function applyHue(name){const t=hues.find(x=>x[0]===name)||hues[0];
+document.documentElement.style.setProperty("--h",t[1]);document.documentElement.style.setProperty("--sat",t[2]);
+$("hue-choices").innerHTML=hues.map(([n,v,sat,l])=>`<button type="button" class="hue-chip ${n===t[0]?"selected":""}" style="--chip-h:${v};--chip-s:${sat};--chip-l:${l}" data-hue="${n}" aria-label="${n}" title="${n}" aria-pressed="${n===t[0]}"></button>`).join("");
 const tc=document.querySelector('meta[name="theme-color"]');if(tc)tc.content=getComputedStyle(document.body).backgroundColor}
 $("hue-choices").onclick=e=>{const b=e.target.closest("[data-hue]");if(!b)return;e.stopPropagation();store.set("hue",b.dataset.hue);applyHue(b.dataset.hue)};
-applyHue(store.get("hue")||"255");
+applyHue(store.get("hue")||"ベージュ");
 
 // ---- 設定 ----
 const names=["パパ","ママ"];let pickName="";
