@@ -188,7 +188,16 @@ function preview(url) {
       headers: { 'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1', 'Accept-Language': 'ja' }
     });
     if (res.getResponseCode() >= 400) return { ok: false, code: 'fetch_failed' };
-    html = res.getContentText().slice(0, 400000);
+    // 文字コードを見て読む（楽天はEUC-JPなど、UTF-8以外のページがある）
+    const headers = res.getHeaders();
+    const ct = String(headers['Content-Type'] || headers['content-type'] || '');
+    let charset = (ct.match(/charset=["']?([\w-]+)/i) || [])[1];
+    if (!charset) {
+      const head = res.getContentText('ISO-8859-1').slice(0, 5000);
+      charset = (head.match(/<meta[^>]+charset=["']?([\w-]+)/i) || [])[1] || 'UTF-8';
+    }
+    try { html = res.getContentText(charset); } catch (err) { html = res.getContentText(); }
+    html = html.slice(0, 400000);
   } catch (err) {
     return { ok: false, code: 'fetch_failed' };
   }
