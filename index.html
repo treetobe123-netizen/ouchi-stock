@@ -1569,7 +1569,7 @@ catch(e){busy=false;$("form-error").textContent="削除できませんでした"
 finally{busy=false;render()}
 }
 async function copyList(){
-const text=visibleItems().filter(low).sort((a,b)=>num(a.count)-num(b.count)).map(i=>"・"+i.name+(i.size?" "+i.size:"")+"（残り"+num(i.count)+(i.unit||"個")+"）").join("\n");
+const text=visibleItems().filter(low).sort((a,b)=>num(a.count)-num(b.count)).map(i=>"・"+i.name+(i.size?" "+i.size:"")+"（残り"+num(i.count)+(i.unit||"個")+"）"+(i.memo?"\n　"+i.memo:"")).join("\n");
 try{await navigator.clipboard.writeText(text);toast("コピーしました")}
 catch{const area=$("copy-text");area.hidden=false;area.value=text;area.focus();area.select();toast("リストを選択しました。コピーしてお使いください")}
 }
