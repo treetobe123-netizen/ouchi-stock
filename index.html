@@ -1315,6 +1315,7 @@ label .error {
 .clearable:has(>:placeholder-shown) .clear-btn,.clearable:has(>[hidden]) ,.clearable:has(>:disabled) .clear-btn{display:none}
 input[type=search]::-webkit-search-cancel-button{-webkit-appearance:none;appearance:none}
 .guess-note{color:var(--muted);font-size:12px;margin-top:6px}
+.photo-input{background:var(--accent-soft);border-radius:18px;padding:14px;margin-bottom:6px}.photo-input-row{display:flex;gap:8px;flex-wrap:wrap}.photo-cta{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-width:180px}.cam-icon{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linejoin:round}.photo-input .photo-status{margin-top:8px}.photo-input.loading .photo-status::after{content:"";display:inline-block;width:12px;height:12px;margin-left:6px;border:2px solid currentColor;border-right-color:var(--transparent);border-radius:50%;animation:spin .8s linear infinite;vertical-align:-2px}@keyframes spin{to{transform:rotate(360deg)}}.search-photo{width:100%;margin-bottom:18px;display:flex;align-items:center;justify-content:center;gap:8px}
 </style>
 </head>
 <body>
@@ -1337,6 +1338,9 @@ input[type=search]::-webkit-search-cancel-button{-webkit-appearance:none;appeara
 <div id="modal" class="modal" hidden>
 <section id="sheet" class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-title" tabindex="-1">
 <div class="sheet-head"><h2 id="sheet-title">ストックを追加</h2><button id="close-sheet" class="icon-button" aria-label="閉じる">×</button></div>
+<div class="photo-input"><div class="photo-input-row"><button id="take-photo" type="button" class="primary photo-cta"><svg viewBox="0 0 24 24" aria-hidden="true" class="cam-icon"><path d="M4 8h3l2-3h6l2 3h3v11H4Z"/><circle cx="12" cy="13" r="3.5"/></svg>写真を撮って入力</button><button id="pick-photo" type="button" class="secondary">アルバムから</button></div>
+<input id="photo-camera" type="file" accept="image/*" capture="environment" hidden><input id="photo-album" type="file" accept="image/*" hidden>
+<p id="ai-status" class="photo-status">商品を撮ると、AIが商品名やカテゴリを入れます</p></div>
 <form id="item-form" novalidate>
 <div class="field"><label for="item-name">商品名 <span class="error">必須</span></label><input id="item-name" required maxlength="200" autocomplete="off" aria-describedby="name-error"><p id="name-error" class="error" hidden>商品名を入力してください</p></div>
 <div class="field"><label for="item-category">カテゴリ</label><select id="item-category"></select></div>
@@ -1426,7 +1430,7 @@ $("search-content").innerHTML=`<p class="muted">登録済み ${matches.length}�
 const c=cat(catalogCat),list=CATALOG_LIST.filter(x=>x.category===c[0]);
 $("search-content").innerHTML=`<div class="page-head"><button class="secondary" data-crumb>‹ カテゴリ一覧</button></div><h2 class="catalog-title">${esc(c[1])}</h2>${list.length?`<p class="hint">押すだけでストックに入ります（在庫1・なくなったら買い足し）</p><div class="grid">${list.map(catalogCard).join("")}</div>`:""}<div class="catalog-own"><button class="primary" data-add="${c[0]}" ${!canWrite()?"disabled":""}>自分で商品を登録する</button></div>`;
 }
-else $("search-content").innerHTML=`<h2>カテゴリから探す</h2>${groups.slice(1).map(g=>`<h3 class="catalog-group">${g[1]}</h3><div class="category-grid">${categories.filter(c=>c[2]===g[0]).map(c=>{const n=CATALOG_LIST.filter(x=>x.category===c[0]).length,m=all.filter(i=>cat(i.category)[0]===c[0]).length,first=CATALOG_LIST.find(x=>x.category===c[0]);return `<button class="category-card" data-browse="${c[0]}">${tile({category:c[0],image:first?catalogImg(first.id):""})}<span><strong>${c[1]}</strong><small>${n?n+"件 · ":""}${m}件登録</small></span></button>`}).join("")}</div>`).join("")}`;
+else $("search-content").innerHTML=`<button class="primary search-photo" data-photo-add ${!canWrite()?"disabled":""}><svg viewBox="0 0 24 24" aria-hidden="true" class="cam-icon"><path d="M4 8h3l2-3h6l2 3h3v11H4Z"/><circle cx="12" cy="13" r="3.5"/></svg>写真を撮って登録</button><h2>カテゴリから探す</h2>${groups.slice(1).map(g=>`<h3 class="catalog-group">${g[1]}</h3><div class="category-grid">${categories.filter(c=>c[2]===g[0]).map(c=>{const n=CATALOG_LIST.filter(x=>x.category===c[0]).length,m=all.filter(i=>cat(i.category)[0]===c[0]).length,first=CATALOG_LIST.find(x=>x.category===c[0]);return `<button class="category-card" data-browse="${c[0]}">${tile({category:c[0],image:first?catalogImg(first.id):""})}<span><strong>${c[1]}</strong><small>${n?n+"件 · ":""}${m}件登録</small></span></button>`}).join("")}</div>`).join("")}`;
 }
 let addingCatalog=new Set();
 async function addCatalog(id){
@@ -1442,6 +1446,7 @@ const b=e.target.closest("button");if(!b||b.disabled)return;
 if(b.dataset.browse){catalogCat=b.dataset.browse;renderSearch(visibleItems());window.scrollTo({top:0,behavior:"instant"})}
 else if(b.hasAttribute("data-crumb")){catalogCat=null;renderSearch(visibleItems())}
 else if(b.dataset.catalog)addCatalog(b.dataset.catalog);
+else if(b.hasAttribute("data-photo-add")){openSheet(null,"other");$("photo-camera").click()}
 });
 function render(){
 const active=document.activeElement;
@@ -1526,7 +1531,7 @@ formCount=num(i?.count);formThreshold=num(i?.threshold,1);
 const size=i?.size||"";formSize=["","新生児","S","M","L","BIG"].includes(size)?size:"other";$("item-size-other").value=formSize==="other"?size:"";
 formUnit=i?.unit||"個";
 for(const key of ["store","price","url","memo"])$("item-"+key).value=i?.[key]??"";
-formImage=safeURL(i?.image);photoView(formImage?"":"商品ページのURLを入れて押すと、写真が入ります");
+formImage=safeURL(i?.image);photoView(formImage?"":"商品ページのURLを入れて押すと、写真が入ります");$("ai-status").textContent="商品を撮ると、AIが商品名やカテゴリを入れます";
 $("name-error").hidden=true;$("url-error").hidden=true;$("form-error").textContent="";$("item-name").removeAttribute("aria-invalid");
 choices();$("modal").hidden=false;document.body.style.overflow="hidden";render();$("sheet").scrollTop=0;$("close-sheet").focus();
 }
@@ -1619,8 +1624,8 @@ const r=Number(json.rev);if(Number.isFinite(r)){if(r<appliedRev)return;appliedRe
 ready=true;banner("");const sig=JSON.stringify(json.items);if(sig===lastSig)return;lastSig=sig;
 items=json.items.map(i=>({...i}));render();
 }
-async function request(url,opts,g){
-const ctl=new AbortController(),t=setTimeout(()=>ctl.abort(),20000);
+async function request(url,opts,g,ms=20000){
+const ctl=new AbortController(),t=setTimeout(()=>ctl.abort(),ms);
 try{
 const res=await fetch(url,{...opts,signal:ctl.signal});
 if(!res.ok)throw {code:"network"};
@@ -1688,6 +1693,39 @@ if(g.unit&&formUnit==="個"){formUnit=g.unit;done.push("単位")}
 if(done.length)choices();
 return done;
 }
+
+// ---- 写真を撮ってAIで入力 ----
+function resizeToJpeg(file,max=1024){
+return new Promise((ok,ng)=>{const url=URL.createObjectURL(file),img=new Image();
+img.onload=()=>{const k=Math.min(1,max/Math.max(img.naturalWidth,img.naturalHeight));const c=document.createElement("canvas");c.width=Math.round(img.naturalWidth*k);c.height=Math.round(img.naturalHeight*k);c.getContext("2d").drawImage(img,0,0,c.width,c.height);URL.revokeObjectURL(url);ok(c.toDataURL("image/jpeg",0.82).split(",")[1])};
+img.onerror=()=>{URL.revokeObjectURL(url);ng(new Error("decode"))};img.src=url})}
+const aiMessages={no_ai_key:"写真は保存しました。AIの自動入力はまだ準備中です（AIのキーが未設定）",ai_key_invalid:"AIのキーが正しくないようです。Apps Scriptの設定を確認してください",ai_busy:"AIが混み合っています。少し待ってからもう一度撮ってください",ai_failed:"写真から読み取れませんでした。手で入力してください",unauthorized:"合言葉が違います"};
+async function photoInput(file){
+if(!file||!api.url)return;
+const box=document.querySelector(".photo-input");box.classList.add("loading");$("ai-status").textContent="AIが写真を見ています…（10秒ほど）";
+$("take-photo").disabled=$("pick-photo").disabled=true;
+try{
+const b64=await resizeToJpeg(file);
+const json=await request(api.url,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({key:api.key,action:"analyze",image:b64})},gen,60000);
+if(json.image){formImage=safeURL(json.image);photoView("撮った写真を入れました")}
+const it=json.item;
+if(json.ok&&it){
+const done=[];
+if(it.name&&(!editing||!$("item-name").value.trim())){$("item-name").value=it.name;done.push("商品名")}
+if(!editing&&it.category){$("item-category").value=cat(it.category)[0];done.push("カテゴリ")}
+if(it.size&&(!editing||!formSize)){formSize=["新生児","S","M","L","BIG"].includes(it.size)?it.size:"other";$("item-size-other").value=formSize==="other"?it.size:"";done.push("サイズ")}
+if(it.unit&&(!editing||formUnit==="個")){formUnit=it.unit;done.push("単位")}
+if(!editing&&it.count){formCount=Math.max(0,Math.round(it.count));done.push("在庫数")}
+if(it.memo&&!$("item-memo").value.trim()){$("item-memo").value=it.memo}
+choices();
+$("ai-status").textContent=done.length?done.join("・")+"を入れました。違うところだけ直して「"+(editing?"保存":"ストックに追加")+"」してね":"読み取れた情報がありませんでした";
+}else $("ai-status").textContent=aiMessages[json.code]||"写真から読み取れませんでした";
+}catch{$("ai-status").textContent="送れませんでした。電波を確認してもう一度お試しください"}
+finally{box.classList.remove("loading");$("take-photo").disabled=$("pick-photo").disabled=!canWrite()||busy}
+}
+$("take-photo").onclick=()=>$("photo-camera").click();
+$("pick-photo").onclick=()=>$("photo-album").click();
+for(const id of ["photo-camera","photo-album"])$(id).addEventListener("change",e=>{const f=e.target.files?.[0];e.target.value="";photoInput(f)});
 
 // ---- 写真 ----
 function photoView(msg){

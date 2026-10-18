@@ -3,6 +3,8 @@
 // 2. 関数「setup」を一度だけ実行（権限を許可）→ 実行ログに「合言葉」が出る
 // 3. 「デプロイ > 新しいデプロイ > ウェブアプリ」
 //    次のユーザーとして実行: 自分 / アクセスできるユーザー: 全員
+// 写真からAIで入力する機能を使うときは、
+//    歯車「プロジェクトの設定」> スクリプト プロパティ に GEMINI_API_KEY を追加する
 
 const SHEET = 'items';
 const COLS = ['id', 'name', 'category', 'size', 'count', 'threshold', 'unit', 'store', 'price', 'url', 'memo', 'updatedBy', 'updatedAt', 'image'];
@@ -34,6 +36,9 @@ function setup() {
     props.setProperty('KEY', key);
   }
   Logger.log('合言葉: ' + key);
+  // 写真の保存先フォルダ（ここでドライブの権限も確認される）
+  photoFolder();
+  Logger.log('AIのキー: ' + (props.getProperty('GEMINI_API_KEY') ? '設定済み' : '未設定（写真からの自動入力を使うときに設定）'));
 }
 
 function out(obj) {
@@ -126,6 +131,7 @@ function doPost(e) {
   try { req = JSON.parse(e.postData.contents); } catch (err) { return out({ ok: false, code: 'bad_request' }); }
   if (!authorized(req.key)) return out({ ok: false, code: 'unauthorized' });
   if (req.action === 'preview') return out(preview(req.url));
+  if (req.action === 'analyze') return out(analyze(req.image, req.ai !== false));
   const lock = LockService.getScriptLock();
   if (!lock.tryLock(15000)) return out({ ok: false, code: 'busy' });
   try {
@@ -227,4 +233,95 @@ function preview(url) {
 
 function decode(s) {
   return String(s).replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&lt;/g, '<').replace(/&gt;/g, '>');
+}
+
+// ---- 写真から入力（Gemini） ----
+const CATEGORY_HINT = [
+  'diaper:おむつ', 'wipes:おしりふき', 'milk:粉ミルク・液体ミルク', 'babyfood:ベビーフード・離乳食', 'skincare:ベビースキンケア',
+  'bath:ベビーのおふろ用品', 'hygiene:衛生・ケア用品(綿棒・体温計など)', 'teeth:歯みがき・乳歯ケア', 'bottle:哺乳びん・乳首',
+  'pump:さく乳器・母乳保存', 'pad:母乳パッド・授乳ケア', 'pacifier:おしゃぶり・歯固め', 'tableware:ベビー食器', 'mug:マグ・ドリンクボトル',
+  'mamasupp:ママ向けサプリ', 'mamadrink:ママ向け飲料', 'maternity:マタニティスキンケア', 'inner:産前産後インナー',
+  'veg:野菜・きのこ', 'fruit:果物', 'meat:肉・ハム・ソーセージ', 'fish:魚・魚介・ツナ缶', 'dairy:卵・乳製品・豆腐・納豆',
+  'staple:米・パン・麺', 'seasoning:調味料・油', 'frozen:冷凍食品・アイス', 'drink:飲み物',
+  'paper:トイレットペーパー・ティッシュ・キッチンペーパー', 'laundry:洗濯用品', 'kitchen:キッチン用品(食器用洗剤・ラップ・ゴミ袋など)',
+  'cleaning:掃除用品', 'bath_body:シャンプー・ボディソープ・ハンドソープなど', 'household:その他の日用品', 'other:その他'
+];
+
+function photoFolder() {
+  const props = PropertiesService.getScriptProperties();
+  const id = props.getProperty('PHOTO_FOLDER');
+  if (id) { try { return DriveApp.getFolderById(id); } catch (err) { /* 消されていたら作り直す */ } }
+  const folder = DriveApp.createFolder('おうちストック写真');
+  props.setProperty('PHOTO_FOLDER', folder.getId());
+  return folder;
+}
+
+function savePhoto(b64) {
+  const blob = Utilities.newBlob(Utilities.base64Decode(b64), 'image/jpeg', 'photo_' + Date.now() + '.jpg');
+  const file = photoFolder().createFile(blob);
+  // 画像としてアプリに表示できるよう「リンクを知っている人は閲覧可」にする（URLは推測できない長いID）
+  file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+  return 'https://drive.google.com/thumbnail?id=' + file.getId() + '&sz=w800';
+}
+
+function analyze(b64, useAi) {
+  b64 = String(b64 || '');
+  if (!b64 || b64.length > 3000000) return { ok: false, code: 'bad_request' };
+  let image = '';
+  try { image = savePhoto(b64); } catch (err) { image = ''; }
+  if (!useAi) return image ? { ok: true, image: image } : { ok: false, code: 'save_failed' };
+  const key = PropertiesService.getScriptProperties().getProperty('GEMINI_API_KEY');
+  if (!key) return { ok: false, code: 'no_ai_key', image: image };
+  const model = PropertiesService.getScriptProperties().getProperty('GEMINI_MODEL') || 'gemini-flash-latest';
+  const prompt = [
+    'この写真は日本の家庭で買い置きしている商品（育児用品・食材・日用品）です。在庫管理アプリに登録するための情報をJSONだけで答えてください。',
+    'name: パッケージに見えるブランド名と商品名を日本語で短く（例「パンパース さらさらケア テープ」「キャベツ」）。読めない部分は推測しない。',
+    'category: 次のキーから1つ → ' + CATEGORY_HINT.join(' / '),
+    'size: おむつ等のサイズが読めれば「新生児」「S」「M」「L」「BIG」のどれか、それ以外の表記ならその文字、なければ空文字。',
+    'unit: 数える単位を1つ（個・パック・箱・袋・本・缶・玉・束・枚 など）。',
+    'count: 写っているパッケージの数（整数、わからなければ1）。',
+    'memo: 容量や枚数など役立つ補足があれば短く、なければ空文字。'
+  ].join('\n');
+  const body = {
+    contents: [{ parts: [{ inline_data: { mime_type: 'image/jpeg', data: b64 } }, { text: prompt }] }],
+    generationConfig: {
+      responseMimeType: 'application/json',
+      responseSchema: {
+        type: 'OBJECT',
+        properties: {
+          name: { type: 'STRING' }, category: { type: 'STRING' }, size: { type: 'STRING' },
+          unit: { type: 'STRING' }, count: { type: 'INTEGER' }, memo: { type: 'STRING' }
+        },
+        required: ['name', 'category', 'unit', 'count']
+      }
+    }
+  };
+  let res;
+  try {
+    res = UrlFetchApp.fetch('https://generativelanguage.googleapis.com/v1beta/models/' + encodeURIComponent(model) + ':generateContent', {
+      method: 'post', contentType: 'application/json', muteHttpExceptions: true,
+      headers: { 'x-goog-api-key': key }, payload: JSON.stringify(body)
+    });
+  } catch (err) {
+    return { ok: false, code: 'ai_failed', image: image };
+  }
+  const status = res.getResponseCode();
+  if (status === 400 || status === 403) return { ok: false, code: 'ai_key_invalid', image: image };
+  if (status === 429) return { ok: false, code: 'ai_busy', image: image };
+  if (status >= 300) return { ok: false, code: 'ai_failed', image: image };
+  try {
+    const json = JSON.parse(res.getContentText());
+    const text = json.candidates[0].content.parts.map(p => p.text || '').join('');
+    const r = JSON.parse(text);
+    const keys = CATEGORY_HINT.map(h => h.split(':')[0]);
+    return {
+      ok: true, image: image,
+      item: {
+        name: str(r.name, 200), category: keys.includes(r.category) ? r.category : 'other',
+        size: str(r.size, 40), unit: str(r.unit, 10) || '個', count: int(r.count || 1, 99), memo: str(r.memo, 200)
+      }
+    };
+  } catch (err) {
+    return { ok: false, code: 'ai_failed', image: image };
+  }
 }
